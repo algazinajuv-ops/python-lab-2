@@ -1,3 +1,5 @@
+from .parsers import parse_csv, parse_jsonl
+
 def analyze(events):
     total = 0
 
