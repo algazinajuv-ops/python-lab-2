@@ -21,10 +21,10 @@ def analyze(events):
     for event in events:  # идем по одному событию за раз
         total += 1
         levels[event.level] += 1
-        sourses[event.sourse] = sourses.get(event.sourse, 0) + 1
+        sourses[event.source] = sourses.get(event.source, 0) + 1
 
         if event.level in ("ERROR", "CRITICAL"):
-            error_sourses[event.sourse] = error_sourses.get(event.sourse, 0) + 1
+            error_sourses[event.source] = error_sourses.get(event.source, 0) + 1
 
         if first_time is None or event.time < first_time:
             first_time = event.time
