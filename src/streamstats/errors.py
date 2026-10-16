@@ -9,6 +9,7 @@ class InvalidEventError(StreamStatsError):
 class InvalidTimestampError(StreamStatsError):
     pass
 
+
 class InvalidSourceError(StreamStatsError):
     pass
 

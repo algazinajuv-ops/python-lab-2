@@ -1,5 +1,3 @@
-
-
 def analyze(events):
     total = 0
 
@@ -32,6 +30,8 @@ def analyze(events):
         if last_time is None or event.time > last_time:
             last_time = event.time
 
-    top5_errors = sorted(error_sourсes.items(), key=lambda item: (-item[1], item[0]))[:5]  # сортируем ошибки сначала по значениям, потом в алфовитном порядке
+    top5_errors = sorted(error_sourсes.items(), key=lambda item: (-item[1], item[0]))[
+        :5
+    ]  # сортируем ошибки сначала по значениям, потом в алфовитном порядке
 
     return total, levels, sourсes, error_sourсes, first_time, last_time, top5_errors
