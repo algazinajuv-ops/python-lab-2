@@ -1,0 +1,32 @@
+{
+    "total": 5,
+    "levels": {
+        "DEBUG": 1,
+        "INFO": 1,
+        "WARNING": 1,
+        "ERROR": 1,
+        "CRITICAL": 1
+    },
+    "sources": {
+        "server": 2,
+        "db": 1,
+        "cache": 1,
+        "worker": 1
+    },
+    "error_sources": {
+        "server": 1,
+        "db": 1
+    },
+    "first_time": "2026-10-14T08:00:00",
+    "last_time": "2026-10-14T08:08:00",
+    "top5_errors": [
+        [
+            "db",
+            1
+        ],
+        [
+            "server",
+            1
+        ]
+    ]
+}

@@ -1,0 +1,9 @@
+{"time":"2026-10-14T08:00:00","level":"INFO","source":"server"}
+{"time":"2026-10-14T08:01:00","level":"ERROR","source":"server"}
+{"time":"2026-10-14T08:02:00","level":"BANANA","source":"server"}
+{"time":"not-a-date","level":"WARNING","source":"db"}
+{"time":"2026-10-14T08:04:00","level":"INFO"}
+{"time":"2026-10-14T08:05:00","level":"CRITICAL","source":"db"}
+{"time":"2026-10-14T08:06:00","level":"WARNING","source":"cache"}
+{"time":"2026-10-14T08:07:00","level":"ERROR","source":"cache"
+{"time":"2026-10-14T08:08:00","level":"DEBUG","source":"worker"}

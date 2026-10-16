@@ -1,16 +1,18 @@
 import argparse
 from .parsers import parse_csv, parse_jsonl
 from .analysis import analyze
+import json
+from .report import make_report
 
 
 
-def all_events(files, format, skip_invalid): #делаем функцию
+def all_events(files, file_format, skip_invalid): #делаем функцию
     for file in files: #проходимся по одному файлу
-        if format == 'csv':
+        if file_format == 'csv':
             events = parse_csv(file, skip_invalid)
         else:
             events = parse_jsonl(file, skip_invalid)
-    yield from events #выдаем последовательно каждый файл
+        yield from events #выдаем последовательно каждый файл
 
 
 
@@ -38,8 +40,12 @@ def main():
 
     events = all_events(args.file, args.format, args.skip_invalid)
     stat = analyze(events)
-    print(stat)
-    return args
+    report = make_report(stat)
+    if args.output:
+        with open(args.output, "w", encoding="utf-8") as file:
+            json.dump(report, file, indent=4, ensure_ascii=False)
+    else: print(report)
+
 
 
 if __name__ == "__main__":  # это как бы защита от импортированных файлов

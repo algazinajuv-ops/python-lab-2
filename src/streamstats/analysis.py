@@ -1,4 +1,4 @@
-from .parsers import parse_csv, parse_jsonl
+
 
 def analyze(events):
     total = 0
@@ -11,9 +11,9 @@ def analyze(events):
         "CRITICAL": 0,
     }
 
-    sourses = {}  # создали пустой словарь для новых значений
+    sourсes = {}  # создали пустой словарь для новых значений
 
-    error_sourses = {}  # создали словарь только для ошибок
+    error_sourсes = {}  # создали словарь только для ошибок
 
     first_time = None
     last_time = None
@@ -21,10 +21,10 @@ def analyze(events):
     for event in events:  # идем по одному событию за раз
         total += 1
         levels[event.level] += 1
-        sourses[event.source] = sourses.get(event.source, 0) + 1
+        sourсes[event.source] = sourсes.get(event.source, 0) + 1
 
         if event.level in ("ERROR", "CRITICAL"):
-            error_sourses[event.source] = error_sourses.get(event.source, 0) + 1
+            error_sourсes[event.source] = error_sourсes.get(event.source, 0) + 1
 
         if first_time is None or event.time < first_time:
             first_time = event.time
@@ -32,6 +32,6 @@ def analyze(events):
         if last_time is None or event.time > last_time:
             last_time = event.time
 
-    top5_errors = sorted(error_sourses.items(), key=lambda item: (-item[1], item[0]))[:5]  # сортируем ошибки сначала по значениям, потом в алфовитном порядке
+    top5_errors = sorted(error_sourсes.items(), key=lambda item: (-item[1], item[0]))[:5]  # сортируем ошибки сначала по значениям, потом в алфовитном порядке
 
-    return total, levels, sourses, error_sourses, first_time, last_time, top5_errors
+    return total, levels, sourсes, error_sourсes, first_time, last_time, top5_errors

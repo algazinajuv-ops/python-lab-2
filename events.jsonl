@@ -1,3 +1,20 @@
-{"time":"2026-10-13T10:00:00","level":"INFO","source":"server"}
-["ERROR", "database"]
-{"time":"2026-10-13T10:10:00","level":"WARNING","source":"network"}
+{"time":"2026-10-13T10:00:00","level":"INFO","source":"api"}
+{"time":"2026-10-13T10:01:00","level":"ERROR","source":"api"}
+{"time":"2026-10-13T10:02:00","level":"WARNING","source":"db"}
+{"time":"2026-10-13T10:03:00","level":"CRITICAL","source":"db"}
+{"time":"2026-10-13T10:04:00","level":"DEBUG","source":"worker"}
+{"time":"2026-10-13T10:05:00","level":"ERROR","source":"db"}
+{"time":"2026-10-13T10:06:00","level":"INFO","source":"worker"}
+{"time":"2026-10-13T10:07:00","level":"ERROR","source":"api"}
+{"time":"2026-10-13T10:08:00","level":"CRITICAL","source":"api"}
+{"time":"2026-10-13T10:09:00","level":"WARNING","source":"worker"}
+{"time":"2026-10-13T10:10:00","level":"ERROR","source":"cache"}
+{"time":"2026-10-13T10:11:00","level":"INFO","source":"cache"}
+{"time":"2026-10-13T10:12:00","level":"ERROR","source":"cache"}
+{"time":"2026-10-13T10:13:00","level":"CRITICAL","source":"db"}
+{"time":"2026-10-13T10:14:00","level":"DEBUG","source":"api"}
+{"time":"2026-10-13T10:15:00","level":"INFO","source":"db"}
+{"time":"2026-10-13T10:16:00","level":"ERROR","source":"worker"}
+{"time":"2026-10-13T10:17:00","level":"WARNING","source":"cache"}
+{"time":"2026-10-13T10:18:00","level":"ERROR","source":"db"}
+{"time":"2026-10-13T10:19:00","level":"CRITICAL","source":"cache"}
