@@ -1,4 +1,7 @@
-def make_report(stats):
+from .analysis import AnalysisResult
+
+
+def make_report(stats: AnalysisResult) -> dict[str, object]:
     total, levels, sources, error_sources, first_time, last_time, top5_errors = stats
 
     report = {  # распаковываем кортеж

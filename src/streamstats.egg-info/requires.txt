@@ -1,5 +1,0 @@
-
-[dev]
-pytest>=8
-ruff
-black

@@ -1,14 +1,21 @@
 import argparse
 import json
 import sys
+from collections.abc import Iterator
 
 from .analysis import analyze
 from .errors import StreamStatsError
+from .models import Event
 from .parsers import parse_csv, parse_jsonl
 from .report import make_report
 
 
-def all_events(files, file_format, skip_invalid, skipped):  # делаем функцию
+def all_events(
+    files: list[str],
+    file_format: str,
+    skip_invalid: bool,
+    skipped: dict[str, int],
+) -> Iterator[Event]:  # делаем функцию
     for file in files:  # проходимся по одному файлу
         if file_format == "csv":
             events = parse_csv(file, skip_invalid, skipped)
@@ -17,7 +24,7 @@ def all_events(files, file_format, skip_invalid, skipped):  # делаем фу�
         yield from events  # выдаем последовательно каждый файл
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser()  # подключили парсер
     subparsers = parser.add_subparsers(
         dest="command",
@@ -57,7 +64,6 @@ def main():
     except OSError as exc:
         print(f"Ошибка при работе с файлом: {exc}", file=sys.stderr)
         return 2
-
 
     return 0
 

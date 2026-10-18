@@ -157,3 +157,79 @@ def test_cli_invalid_format():  # проверяем неподдерживае�
 
     assert result.returncode == 2
     assert "invalid choice" in result.stderr
+
+
+def test_cli_multiple_files(tmp_path):  # объединение двух JSONL-файлов
+    first = tmp_path / "first.jsonl"
+    second = tmp_path / "second.jsonl"
+
+    first.write_text(
+        '{"timestamp":"2026-10-18T10:00:00",'
+        '"level":"INFO","source":"api","message":"Started"}\n'
+        '{"timestamp":"2026-10-18T10:05:00",'
+        '"level":"ERROR","source":"db","message":"Failed"}\n',
+        encoding="utf-8",
+    )
+
+    second.write_text(
+        '{"timestamp":"2026-10-18T09:00:00",'
+        '"level":"CRITICAL","source":"db","message":"Crash"}\n'
+        '{"timestamp":"2026-10-18T11:00:00",'
+        '"level":"WARNING","source":"worker","message":"Slow"}\n',
+        encoding="utf-8",
+    )
+
+    result = run_cli("analyze", first, second, "--format", "jsonl")
+
+    assert result.returncode == 0
+
+    report = json.loads(result.stdout)
+
+    assert report["total"] == 4
+    assert report["skipped"] == 0
+    assert report["levels"]["ERROR"] == 1
+    assert report["levels"]["CRITICAL"] == 1
+    assert report["sources"] == {"api": 1, "db": 2, "worker": 1}
+    assert report["error_sources"] == {"db": 2}
+    assert report["first_time"] == "2026-10-18T09:00:00"
+    assert report["last_time"] == "2026-10-18T11:00:00"
+    assert report["top5_errors"] == [["db", 2]]
+
+
+def test_cli_broken_json_line_7(tmp_path):  # ошибка JSON на 7 строке
+    path = tmp_path / "broken.jsonl"
+
+    valid = (
+        '{"timestamp":"2026-10-18T10:00:00",'
+        '"level":"INFO","source":"api","message":"OK"}\n'
+    )
+
+    path.write_text(
+        valid * 6 + '{"timestamp":\n',
+        encoding="utf-8",
+    )
+
+    result = run_cli("analyze", path, "--format", "jsonl")
+
+    assert result.returncode == 2
+    assert "broken.jsonl:7" in result.stderr
+    assert "Traceback" not in result.stderr
+
+
+def test_cli_invalid_timestamp_details(tmp_path):  # поле и строка ошибки
+    path = tmp_path / "invalid_date.jsonl"
+
+    path.write_text(
+        '{"timestamp":"2026-10-18T10:00:00",'
+        '"level":"INFO","source":"api","message":"OK"}\n'
+        '{"timestamp":"wrong-date",'
+        '"level":"ERROR","source":"db","message":"Failed"}\n',
+        encoding="utf-8",
+    )
+
+    result = run_cli("analyze", path, "--format", "jsonl")
+
+    assert result.returncode == 2
+    assert "invalid_date.jsonl:2" in result.stderr
+    assert "timestamp" in result.stderr
+    assert "Traceback" not in result.stderr

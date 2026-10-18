@@ -16,3 +16,7 @@ class InvalidSourceError(StreamStatsError):
 
 class UnsupportedFormatError(StreamStatsError):
     pass
+
+
+class CLIConfigError(StreamStatsError):
+    pass

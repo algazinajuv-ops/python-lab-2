@@ -1,4 +1,20 @@
-def analyze(events):
+from collections.abc import Iterable
+from datetime import datetime
+
+from .models import Event
+
+AnalysisResult = tuple[  # для аннотации вывода
+    int,
+    dict[str, int],
+    dict[str, int],
+    dict[str, int],
+    datetime | None,
+    datetime | None,
+    list[tuple[str, int]],
+]
+
+
+def analyze(events: Iterable[Event]) -> AnalysisResult:
     total = 0
 
     levels = {

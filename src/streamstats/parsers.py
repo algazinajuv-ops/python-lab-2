@@ -1,7 +1,9 @@
 import csv
 import json
 import logging
+from collections.abc import Iterator  # перебирает по одному
 from datetime import datetime
+from pathlib import Path
 
 from .errors import (
     InvalidEventError,
@@ -14,7 +16,11 @@ from .models import Event
 logger = logging.getLogger(__name__)
 
 
-def parse_csv(path, skip_invalid=False, skipped=None):
+def parse_csv(
+    path: str | Path,
+    skip_invalid: bool = False,
+    skipped: dict[str, int] | None = None,
+) -> Iterator[Event]:
     with open(
         path, encoding="utf-8", newline=""
     ) as file:  # автоматически закрывает за собой файл,
@@ -36,7 +42,11 @@ def parse_csv(path, skip_invalid=False, skipped=None):
                     raise InvalidEventError(f"{path}:{number} — {exc}") from exc
 
 
-def parse_jsonl(path, skip_invalid=False, skipped=None):
+def parse_jsonl(
+    path: str | Path,
+    skip_invalid: bool = False,
+    skipped: dict[str, int] | None = None,
+) -> Iterator[Event]:
     with open(path, encoding="utf-8", newline="") as file:
         for number, row in enumerate(
             file, start=1
@@ -79,13 +89,17 @@ def make_event(row: dict[str, object], number: int) -> Event:
         raise InvalidSourceError(f"Недопустимый источник в {number} строке")
     if not isinstance(timestamp, str) or not timestamp:
         raise InvalidTimestampError(
-            f"Отсутствует или некорректно время в {number} строке"
+            f"Отсутствует или некорректно поле timestamp в строке {number}"
         )
+
     if not isinstance(message, str):  # пустое соо можно
         raise InvalidEventError(f"Неверная запись сообщения в {number} строке")
     try:
         timestamp = datetime.fromisoformat(timestamp)  # делаем нужный формат времени
-    except (ValueError, TypeError):  # если строка или 123
-        raise InvalidTimestampError(f"Некоректное значение времени в {number} строке")
+    except (ValueError, TypeError) as exc:
+        raise InvalidTimestampError(
+            f"Некорректное значение поля timestamp в строке {number}"
+        ) from exc
+
     event = Event(timestamp, level, source, message)
     return event
