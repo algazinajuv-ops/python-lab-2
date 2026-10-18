@@ -1,17 +1,19 @@
 import argparse
 import json
+import sys
 
 from .analysis import analyze
+from .errors import StreamStatsError
 from .parsers import parse_csv, parse_jsonl
 from .report import make_report
 
 
-def all_events(files, file_format, skip_invalid):  # делаем функцию
+def all_events(files, file_format, skip_invalid, skipped):  # делаем функцию
     for file in files:  # проходимся по одному файлу
         if file_format == "csv":
-            events = parse_csv(file, skip_invalid)
+            events = parse_csv(file, skip_invalid, skipped)
         else:
-            events = parse_jsonl(file, skip_invalid)
+            events = parse_jsonl(file, skip_invalid, skipped)
         yield from events  # выдаем последовательно каждый файл
 
 
@@ -34,16 +36,31 @@ def main():
         action="store_true",  # если встретится-тру
     )
     args = parser.parse_args()
+    skipped = {"count": 0}
 
-    events = all_events(args.file, args.format, args.skip_invalid)
-    stat = analyze(events)
-    report = make_report(stat)
-    if args.output:
-        with open(args.output, "w", encoding="utf-8") as file:
-            json.dump(report, file, indent=4, ensure_ascii=False)
-    else:
-        print(report)
+    try:
+        events = all_events(args.file, args.format, args.skip_invalid, skipped)
+        stat = analyze(events)
+        report = make_report(stat)
+
+        report["skipped"] = skipped["count"]
+
+        if args.output:
+            with open(args.output, "w", encoding="utf-8") as file:
+                json.dump(report, file, indent=4, ensure_ascii=False)
+        else:
+            print(json.dumps(report, indent=4, ensure_ascii=False))
+
+    except StreamStatsError as exc:
+        print(f"Ошибка: {exc}", file=sys.stderr)
+        return 2
+    except OSError as exc:
+        print(f"Ошибка при работе с файлом: {exc}", file=sys.stderr)
+        return 2
+
+
+    return 0
 
 
 if __name__ == "__main__":  # это как бы защита от импортированных файлов
-    main()  # если бы просто импортировали, то код бы не запустился
+    sys.exit(main())  # если бы просто импортировали, то код бы не запустился

@@ -1,3 +1,9 @@
 Metadata-Version: 2.4
 Name: streamstats
-Version: 0.0.0
+Version: 0.1.0
+Summary: Streaming analyzer for CSV and JSONL event logs
+Requires-Python: >=3.11
+Provides-Extra: dev
+Requires-Dist: pytest>=8; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
+Requires-Dist: black; extra == "dev"

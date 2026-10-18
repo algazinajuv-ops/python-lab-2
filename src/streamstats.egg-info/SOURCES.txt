@@ -10,4 +10,8 @@ src/streamstats/report.py
 src/streamstats.egg-info/PKG-INFO
 src/streamstats.egg-info/SOURCES.txt
 src/streamstats.egg-info/dependency_links.txt
+src/streamstats.egg-info/requires.txt
 src/streamstats.egg-info/top_level.txt
+tests/test_analysis.py
+tests/test_cli.py
+tests/test_parsers.py

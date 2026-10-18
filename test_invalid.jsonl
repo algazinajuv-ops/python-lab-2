@@ -1,9 +1,15 @@
-{"time":"2026-10-14T08:00:00","level":"INFO","source":"server"}
-{"time":"2026-10-14T08:01:00","level":"ERROR","source":"server"}
-{"time":"2026-10-14T08:02:00","level":"BANANA","source":"server"}
-{"time":"not-a-date","level":"WARNING","source":"db"}
-{"time":"2026-10-14T08:04:00","level":"INFO"}
-{"time":"2026-10-14T08:05:00","level":"CRITICAL","source":"db"}
-{"time":"2026-10-14T08:06:00","level":"WARNING","source":"cache"}
-{"time":"2026-10-14T08:07:00","level":"ERROR","source":"cache"
-{"time":"2026-10-14T08:08:00","level":"DEBUG","source":"worker"}
+{"timestamp":"2026-10-18T09:00:00","level":"INFO","source":"api","message":"Server started"}
+{"timestamp":"2026-10-18T09:01:00","level":"ERROR","source":"db","message":"Connection failed"}
+{"timestamp":"2026-10-18T09:02:00","level":"BANANA","source":"api","message":"Unknown level"}
+{"timestamp":"not-a-date","level":"WARNING","source":"worker","message":"Invalid date"}
+{"timestamp":"2026-10-18T09:04:00","level":"INFO","message":"Missing source"}
+{"timestamp":"2026-10-18T09:05:00","level":"CRITICAL","source":"db","message":"Database unavailable"}
+{"timestamp":"2026-10-18T09:06:00","level":"WARNING","source":"cache","message":"High memory usage"}
+{"timestamp":"2026-10-18T09:07:00","level":"ERROR","source":"cache","message":"Broken JSON"
+{"timestamp":"2026-10-18T09:08:00","level":"DEBUG","source":"worker","message":"Task finished"}
+{"timestamp":"2026-10-18T09:09:00","level":"INFO","source":"api","message":123}
+{"timestamp":123,"level":"INFO","source":"api","message":"Invalid timestamp type"}
+{"timestamp":"2026-10-18T09:12:00","level":["ERROR"],"source":"api","message":"Invalid level type"}
+{"timestamp":"2026-10-18T09:13:00","level":"INFO","source":"api","message":""}
+{"timestamp":"2026-10-18T09:14:00","level":"ERROR","source":"   ","message":"Blank source"}
+{"timestamp":"2026-10-18T09:15:00","level":"ERROR","source":"api","message":"Request failed"}

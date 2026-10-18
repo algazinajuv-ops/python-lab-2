@@ -1,5 +1,6 @@
 import csv
 import json
+import logging
 from datetime import datetime
 
 from .errors import (
@@ -10,8 +11,10 @@ from .errors import (
 )
 from .models import Event
 
+logger = logging.getLogger(__name__)
 
-def parse_csv(path, skip_invalid=False):
+
+def parse_csv(path, skip_invalid=False, skipped=None):
     with open(
         path, encoding="utf-8", newline=""
     ) as file:  # автоматически закрывает за собой файл,
@@ -23,18 +26,21 @@ def parse_csv(path, skip_invalid=False):
                 yield (
                     make_event(row, number)
                 )  # выдает и приостанавливает до след запроса
-            except StreamStatsError:
+            except StreamStatsError as exc:
                 if skip_invalid:
-                    continue  # продолжаем
+                    logger.warning(f"{path}:{number} — {exc}")
+                    if skipped is not None:
+                        skipped["count"] += 1
+                    continue
                 else:
-                    raise  # запускаем ошибку
+                    raise InvalidEventError(f"{path}:{number} — {exc}") from exc
 
 
-def parse_jsonl(path, skip_invalid=False):
+def parse_jsonl(path, skip_invalid=False, skipped=None):
     with open(path, encoding="utf-8", newline="") as file:
         for number, row in enumerate(
             file, start=1
-        ):  # старт с 1 потому что в джсон нет загаловка
+        ):  # старт с 1 потому что в джсон нет загoловка
             try:
                 row = json.loads(row)
                 if not (isinstance(row, dict)):
@@ -43,11 +49,14 @@ def parse_jsonl(path, skip_invalid=False):
             except (
                 StreamStatsError,
                 json.JSONDecodeError,
-            ):  # проверить еще и ошибку синтаксиса файла
+            ) as exc:  # проверить еще и ошибку синтаксиса файла
                 if skip_invalid:
+                    logger.warning(f"{path}:{number} — {exc}")
+                    if skipped is not None:
+                        skipped["count"] += 1
                     continue
                 else:
-                    raise
+                    raise InvalidEventError(f"{path}:{number} — {exc}") from exc
 
 
 allowed_levels = {
@@ -59,19 +68,24 @@ allowed_levels = {
 }
 
 
-def make_event(row: dict[str, str], number: int):
-    time = row.get("time")  # вычленяем значение
+def make_event(row: dict[str, object], number: int) -> Event:
+    timestamp = row.get("timestamp")  # вычленяем значение
     level = row.get("level")
     source = row.get("source")
-    if level not in allowed_levels:
+    message = row.get("message")
+    if not isinstance(level, str) or level not in allowed_levels:
         raise InvalidEventError(f"Недопустимый уровень события в {number} строке")
-    if not time:
-        raise InvalidTimestampError(f"Отсутствует время в {number} строке")
-    if not source:
-        raise InvalidSourceError(f"Отсутствует источник в {number} строке")
+    if not isinstance(source, str) or not source.strip():
+        raise InvalidSourceError(f"Недопустимый источник в {number} строке")
+    if not isinstance(timestamp, str) or not timestamp:
+        raise InvalidTimestampError(
+            f"Отсутствует или некорректно время в {number} строке"
+        )
+    if not isinstance(message, str):  # пустое соо можно
+        raise InvalidEventError(f"Неверная запись сообщения в {number} строке")
     try:
-        time = datetime.fromisoformat(time)  # делаем нужный формат времени
-    except ValueError:
+        timestamp = datetime.fromisoformat(timestamp)  # делаем нужный формат времени
+    except (ValueError, TypeError):  # если строка или 123
         raise InvalidTimestampError(f"Некоректное значение времени в {number} строке")
-    event = Event(time, level, source)
+    event = Event(timestamp, level, source, message)
     return event

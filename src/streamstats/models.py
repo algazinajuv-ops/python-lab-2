@@ -1,8 +1,9 @@
-from datetime import *
+from datetime import datetime
 
 
 class Event:  # создали класс
-    def __init__(self, time: datetime, level: str, source: str):
-        self.time = time  # сохранить переданное значение внутри переменной
+    def __init__(self, timestamp: datetime, level: str, source: str, message: str):
+        self.timestamp = timestamp  # сохранить переданное значение внутри переменной
         self.level = level
         self.source = source
+        self.message = message
