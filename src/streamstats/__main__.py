@@ -2,9 +2,10 @@ import argparse
 import json
 import sys
 from collections.abc import Iterator
+from pathlib import Path
 
 from .analysis import analyze
-from .errors import StreamStatsError
+from .errors import CLIConfigError, StreamStatsError
 from .models import Event
 from .parsers import parse_csv, parse_jsonl
 from .report import make_report
@@ -45,7 +46,17 @@ def main() -> int:
     args = parser.parse_args()
     skipped = {"count": 0}
 
+    skipped = {"count": 0}
+
+    events = all_events(args.file, args.format, args.skip_invalid, skipped)
+
     try:
+        if args.output:  # проверка на одинаковый входной\выходной файл
+            output_path = Path(args.output).resolve()
+
+            for input_file in args.file:
+                if Path(input_file).resolve() == output_path:
+                    raise CLIConfigError("Входной и выходной файлы не должны совпадать")
         events = all_events(args.file, args.format, args.skip_invalid, skipped)
         stat = analyze(events)
         report = make_report(stat)

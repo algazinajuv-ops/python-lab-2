@@ -233,3 +233,30 @@ def test_cli_invalid_timestamp_details(tmp_path):  # поле и строка о
     assert "invalid_date.jsonl:2" in result.stderr
     assert "timestamp" in result.stderr
     assert "Traceback" not in result.stderr
+
+
+def test_cli_same_input_output(tmp_path):  # входной и выходной файлы совпадают
+    path = tmp_path / "events.jsonl"
+
+    original_data = (
+        '{"timestamp":"2026-10-18T10:00:00",'
+        '"level":"INFO","source":"api","message":"Started"}\n'
+    )
+
+    path.write_text(original_data, encoding="utf-8")
+
+    result = run_cli(
+        "analyze",
+        path,
+        "--format",
+        "jsonl",
+        "--output",
+        path,
+    )
+
+    assert result.returncode == 2
+    assert "Входной и выходной файлы не должны совпадать" in result.stderr
+    assert "Traceback" not in result.stderr
+
+    # Убеждаемся, что исходный файл не был перезаписан
+    assert path.read_text(encoding="utf-8") == original_data
