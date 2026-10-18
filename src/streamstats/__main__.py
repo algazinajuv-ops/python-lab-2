@@ -46,9 +46,6 @@ def main() -> int:
     args = parser.parse_args()
     skipped = {"count": 0}
 
-    skipped = {"count": 0}
-
-    events = all_events(args.file, args.format, args.skip_invalid, skipped)
 
     try:
         if args.output:  # проверка на одинаковый входной\выходной файл
